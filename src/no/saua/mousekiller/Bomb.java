@@ -43,25 +43,25 @@ public class Bomb extends Entity {
 	
 	private void setupGrid(GL10 gl, Map map) {
 		//TODO: Use only 2 squares, not ... a lot
-		walkableLeft = walkableTiles(map, tilex, tiley, -1, 0);
-		walkableRight = walkableTiles(map, tilex, tiley, 1, 0);
-		walkableUp = walkableTiles(map, tilex, tiley, 0, 1);
-		walkableDown = walkableTiles(map, tilex, tiley, 0, -1);
+		walkableLeft = Math.min(max_tiles, walkableTiles(map, tilex, tiley, -1, 0));
+		walkableRight = Math.min(max_tiles, walkableTiles(map, tilex, tiley, 1, 0));
+		walkableUp = Math.min(max_tiles, walkableTiles(map, tilex, tiley, 0, 1));
+		walkableDown = Math.min(max_tiles, walkableTiles(map, tilex, tiley, 0, -1));
 		
 		grid = new Grid(walkableLeft + walkableRight + walkableUp + walkableDown + 1); // 1 = this grid
 		setGridSquare(map, 0, tilex, tiley);
 
 		
-		for (int i = 1; i <= walkableLeft && i <= max_tiles; i++)
+		for (int i = 1; i <= walkableLeft; i++)
 			setGridSquare(map, i, tilex - i, tiley);
 		
-		for (int i = 1; i <= walkableRight && i <= max_tiles; i++)
+		for (int i = 1; i <= walkableRight; i++)
 			setGridSquare(map, i + walkableLeft, tilex + i, tiley);
 		
-		for (int i = 1; i <= walkableUp && i <= max_tiles; i++)
+		for (int i = 1; i <= walkableUp; i++)
 			setGridSquare(map, i + walkableLeft + walkableRight, tilex, tiley + i);
 		
-		for (int i = 1; i <= walkableDown && i <= max_tiles; i++)
+		for (int i = 1; i <= walkableDown; i++)
 			setGridSquare(map, i + walkableLeft + walkableRight + walkableUp, tilex, tiley - i);
 	}
 	
