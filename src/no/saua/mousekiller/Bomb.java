@@ -11,6 +11,7 @@ import no.saua.engine.Texture;
 import android.content.res.AssetManager;
 
 public class Bomb extends Entity {
+	private static final int max_tiles = 5;
 	public static Texture[] bomb;
 	private static Texture[] bang;
 	private Grid grid;
@@ -51,16 +52,16 @@ public class Bomb extends Entity {
 		setGridSquare(map, 0, tilex, tiley);
 
 		
-		for (int i = 1; i <= walkableLeft; i++)
+		for (int i = 1; i <= walkableLeft && i <= max_tiles; i++)
 			setGridSquare(map, i, tilex - i, tiley);
 		
-		for (int i = 1; i <= walkableRight; i++)
+		for (int i = 1; i <= walkableRight && i <= max_tiles; i++)
 			setGridSquare(map, i + walkableLeft, tilex + i, tiley);
 		
-		for (int i = 1; i <= walkableUp; i++)
+		for (int i = 1; i <= walkableUp && i <= max_tiles; i++)
 			setGridSquare(map, i + walkableLeft + walkableRight, tilex, tiley + i);
 		
-		for (int i = 1; i <= walkableDown; i++)
+		for (int i = 1; i <= walkableDown && i <= max_tiles; i++)
 			setGridSquare(map, i + walkableLeft + walkableRight + walkableUp, tilex, tiley - i);
 	}
 	
