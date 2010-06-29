@@ -19,6 +19,9 @@ public class StopSign extends Entity {
 	
 	public void collision(Mouse mouse) {
 		mouse.setDirection(Direction.getReverseDirection(mouse.getDirection()));
+		float mx = posx + Direction.getX(mouse.getDirection()) * (mouse.getCollisionRadius() + getCollisionRadius());
+		float my = posy + Direction.getY(mouse.getDirection()) * (mouse.getCollisionRadius() + getCollisionRadius());
+		mouse.setPosition(mx, my);
 	}
 	
 	public static void loadSprites(GL10 gl, AssetManager assets) throws IOException {
