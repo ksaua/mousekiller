@@ -33,8 +33,8 @@ public class TextureGrid {
 	
 	private float tileTexRatioX;
 	private float tileTexRatioY;
-	private int textureRows;
-	private int textureColumns;
+//	private int textureRows;
+//	private int textureColumns;
 	
 	public TextureGrid(Texture texture, int columns, int rows, int tilewidth, int tileheight) {
 		this.texture = texture;
@@ -45,8 +45,8 @@ public class TextureGrid {
 		
 		tileTexRatioX = tilewidth / (float)texture.getWidth();
 		tileTexRatioY = tileheight / (float)texture.getHeight();
-		textureColumns = (int) (1 / tileTexRatioX);
-		textureRows = (int) (1 / tileTexRatioY); 
+//		textureColumns = (int) (1 / tileTexRatioX);
+//		textureRows = (int) (1 / tileTexRatioY); 
 		
 		/* Since texture coordinates is linked to a vertex, we must create a single square with all its independent vertices for each tile.
 		 * The vertices is set up in this fashion:
@@ -230,10 +230,25 @@ public class TextureGrid {
 			gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
 
 			if (vertexbufferId == 0 || texturebufferId == 0 || indexbufferId == 0 || gl11.glGetError() != 0) {
-				Log.e("TextureGrid", "Not available: " + gl11.glGetError());
+				Log.e("TextureGridASADFSA", "Not available: " + gl11.glGetError());
 			}
+		} else {
+			Log.e("TextureGrid", "GL not gl11");
 		}
 	}
+	
+	 public void releaseHardwareBuffers(GL10 gl) {
+		 GL11 gl11 = (GL11)gl;
+		 int[] buffer = new int[1];
+		 buffer[0] = vertexbufferId;
+		 gl11.glDeleteBuffers(1, buffer, 0);
+
+		 buffer[0] = texturebufferId;
+		 gl11.glDeleteBuffers(1, buffer, 0);
+
+		 buffer[0] = indexbufferId;
+		 gl11.glDeleteBuffers(1, buffer, 0);
+	 }
 	
 	public void render(GL10 gl) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -259,8 +274,8 @@ public class TextureGrid {
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         
-//		if (vertexbufferId == 0 || texturebufferId == 0 || indexbufferId == 0 || gl11.glGetError() != 0) {
-//			Log.e("RenderVBO", "Not available: " + gl11.glGetError());
-//		}
+		if (vertexbufferId == 0 || texturebufferId == 0 || indexbufferId == 0 || gl11.glGetError() != 0) {
+			Log.e("TextureGrid", vertexbufferId + ", " + texturebufferId + ", " + indexbufferId + ", " + gl11.glGetError());
+		}
 	}
 }

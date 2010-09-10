@@ -7,7 +7,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 import no.saua.engine.Engine;
 import no.saua.engine.Entity;
+import no.saua.engine.Font;
 import no.saua.engine.State;
+import no.saua.engine.Texture;
 import no.saua.engine.collisionsystem.CollisionGroup;
 import no.saua.engine.collisionsystem.CollisionHandler;
 import no.saua.mousekiller.Sidebar.SidebarListener;
@@ -28,9 +30,17 @@ public class GameState extends State implements SidebarListener {
 	SidebarItem sideBomb, sideStopSign, sideMale, sideFemale;
 	
 	Engine engine;
+	FPSText fpstext;
 	
 	public synchronized void init(Engine e, GL10 gl, AssetManager assets) {
 		engine = e;
+		try {
+			Font font = new Font(Texture.loadTexture(gl, assets.open("fonts/monospacenumbers.png")), "1234567890", 12, 15);
+			fpstext = new FPSText(e, font);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			System.exit(-1);
+		}
 		gl.glClearColor(12f / 256f, 1, 0, 1);
 		
 		try {
@@ -99,6 +109,8 @@ public class GameState extends State implements SidebarListener {
 		for (Bomb bomb: bombs) {
 			bomb.renderGrid(gl);
 		}
+		fpstext.render(gl);
+		gl.glLoadIdentity();
 		sidebar.render(gl);
 	}
 
@@ -121,6 +133,8 @@ public class GameState extends State implements SidebarListener {
 //		}
 		
 		collisionGroup.check();
+		
+		fpstext.update(dt, e.gl);
 	}
 
 	public synchronized void onTouchPress(Engine e, float x, float y) {

@@ -110,6 +110,8 @@ public class RenderVBO implements GenericRenderStrategy {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		texture.bind(gl);
 		
+		gl.glPushMatrix();
+		
 		gl.glTranslatef(posx, posy, 0);
 		gl.glScalef(width, height, 1f);
 		
@@ -137,7 +139,7 @@ public class RenderVBO implements GenericRenderStrategy {
         gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
         gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
         
-
+        gl.glPopMatrix();
 	}
 
 
@@ -147,6 +149,6 @@ public class RenderVBO implements GenericRenderStrategy {
 	}
 
 	public void render(GL10 gl, Texture texture) {
-		render(gl, texture, 0, 0);
+		render(gl, texture, texture.getWidth(), texture.getHeight());
 	}
 }

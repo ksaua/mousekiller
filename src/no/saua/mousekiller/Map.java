@@ -190,13 +190,13 @@ public class Map {
 		int sizex = o.readByte();
 		int sizey = o.readByte();
 		
-		Log.e("Map", sizex + ", " + sizey);
+		Log.d("Map", sizex + ", " + sizey);
 		
 		byte[][] tiles = new byte[sizey][sizex];
 		for (int y = 0; y < sizey; y++) {
 			for (int x = 0; x < sizex; x++) {
 				tiles[y][x] = o.readByte();
-				Log.e("Map", x + ", "+ y + ": " + tiles[y][x]);
+				Log.d("Map", x + ", "+ y + ": " + tiles[y][x]);
 			}	
 		}
 		
