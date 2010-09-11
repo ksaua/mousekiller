@@ -18,7 +18,7 @@ public abstract class Entity {
 	// Collision stuff
 	private boolean collidable;
 	private float collisionRadius;
-	private boolean moveable;
+	private boolean moveable = true;
 	
 	private boolean removing;
 	
