@@ -15,6 +15,7 @@ public class StopSign extends Entity {
 		setPosition(map.getTileCenterX(tilex), map.getTileCenterY(tiley));
 		setCollisionRadius(12);
 		setCollidable(true);
+		setMoveable(false);
 		setTexture(tex);
 		collisionsLeft = 3;
 	}

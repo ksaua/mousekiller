@@ -39,10 +39,12 @@ public class CollisionGroup {
 	}
 	
 	private void check(Entity a, Entity b) {
-		if (a.collidable() && b.collidable()) {
-			if (Utils.distanceSquared(b.getX(), b.getY(), a.getX(), a.getY()) < Math.pow(b.getCollisionRadius() + a.getCollisionRadius(), 2)) {
-				for (CollisionHandler ch: handlers) {
-					ch.collisionOccured(a, b);
+		if (a.isMoveable() || b.isMoveable()) {
+			if (a.collidable() && b.collidable()) {
+				if (Utils.distanceSquared(b.getX(), b.getY(), a.getX(), a.getY()) < Math.pow(b.getCollisionRadius() + a.getCollisionRadius(), 2)) {
+					for (CollisionHandler ch: handlers) {
+						ch.collisionOccured(a, b);
+					}
 				}
 			}
 		}

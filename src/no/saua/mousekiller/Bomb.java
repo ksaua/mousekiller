@@ -33,6 +33,7 @@ public class Bomb extends Entity {
 		setPosition(map.getTileCenterX(tilex), map.getTileCenterY(tiley));
 		setCollisionRadius(12);
 		setCollidable(true);
+		setMoveable(false);
 		fusetime = 4;
 		bangtime = 0.5f;
 		setAnimation(new Animation(bomb, fusetime / bomb.length ));

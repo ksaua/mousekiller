@@ -17,6 +17,7 @@ public class GenderChanger extends Entity {
 		setPosition(map.getTileCenterX(tilex), map.getTileCenterY(tiley));
 		setCollisionRadius(12);
 		setCollidable(true);
+		setMoveable(false);
 		setTexture(male? texMale : texFemale);
 	}
 	

@@ -18,7 +18,7 @@ public abstract class Entity {
 	// Collision stuff
 	private boolean collidable;
 	private float collisionRadius;
-	private boolean immoveable;
+	private boolean moveable;
 	
 	private boolean removing;
 	
@@ -72,8 +72,17 @@ public abstract class Entity {
 	public void remove() {
 		removing = true;
 	}
+	
 	public boolean isRemoving() {
 		return removing;
+	}
+	
+	public void setMoveable(boolean m) {
+		moveable = m;
+	}
+	
+	public boolean isMoveable() {
+		return moveable;
 	}
 	
 	public void update(float dt, GameState gs) {

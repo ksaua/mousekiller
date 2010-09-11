@@ -89,6 +89,7 @@ public class Mouse extends Entity {
 		int cpx = map.getTileX(posx);
 		int cpy = map.getTileY(posy);
 		
+		// Check the map for available directions
 		byte availableDirections = 0;
 		byte numavail = 0;
 		for (byte d: Direction.ALL) {
@@ -98,10 +99,13 @@ public class Mouse extends Entity {
 			}
 		}
 		if (numavail == 0) {
+			// Reverse if no directions available
 			direction = Direction.getReverseDirection(direction);
 		} else if (numavail == 1) {
+			// If only one direction available, choose that one.
 			direction = availableDirections;
 		} else {
+			// If multiple directions are available, choose a random one
 			int chosen = Utils.randint(1, numavail);
 			for (byte d: Direction.ALL) {
 				if ((d & availableDirections) != 0) {
