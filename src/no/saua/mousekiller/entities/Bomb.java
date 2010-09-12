@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.microedition.khronos.opengles.GL10;
 
 import no.saua.engine.Animation;
-import no.saua.engine.Engine;
 import no.saua.engine.Entity;
 import no.saua.engine.Grid;
 import no.saua.engine.Texture;
@@ -102,7 +101,7 @@ public class Bomb extends Entity {
 	public void update(float dt, GameState gs) {
 		super.update(dt, gs);
 		if (!initialized) {
-			grid.generateBuffers(gs.engine.getGL());
+			grid.generateBuffers(gs.getEngine().getGL());
 			initialized = true;
 		}
 
@@ -115,7 +114,7 @@ public class Bomb extends Entity {
 		} else {
 			bangtime -= dt;
 			if (bangtime < 0) {
-				grid.releaseHardwareBuffers(gs.engine.getGL());
+				grid.releaseHardwareBuffers(gs.getEngine().getGL());
 				this.remove();
 			} else {
 				bangAnimation.update(dt);
@@ -129,10 +128,10 @@ public class Bomb extends Entity {
 		setAnimation(null);
 		
 		// Remove entities inside tiles
-		for (Entity entity: gs.entities) {
+		for (Entity entity: gs.getEntities()) {
 			if (entity != this) {
-				int etx = gs.map.getTileX(entity.getX());
-				int ety = gs.map.getTileY(entity.getY());
+				int etx = gs.getMap().getTileX(entity.getX());
+				int ety = gs.getMap().getTileY(entity.getY());
 				if (tiley == ety && (tilex - walkableLeft <= etx && etx <= tilex + walkableRight)) 
 					entity.remove();
 				else if (tilex == etx && (tiley - walkableDown <= ety && ety <= tiley + walkableUp))
@@ -151,9 +150,5 @@ public class Bomb extends Entity {
 		for (int i = 0; i < bang.length; i++) {
 			bang[i] = Texture.loadTexture(gl, assets.open("textures/bang" + (i + 1) + ".png"));;
 		}
-	}
-
-	public Entity createItem(GL10 gl, Map map, int tilex, int tiley) {
-		return null;
 	}
 }

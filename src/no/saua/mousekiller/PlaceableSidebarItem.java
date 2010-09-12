@@ -14,17 +14,15 @@ public class PlaceableSidebarItem  {
 		public Texture getIconTexture();
 	}
 	
-	GuiEntity icon;
-	float origx;
-	float origy;
+	private GuiEntity icon;
+	private float origx;
+	private float origy;
 	
-	SidebarItemCreator creator;
+	private SidebarItemCreator creator;
 	
-	int amount;
-	Font font;
-	Text text;
-	private float posx;
-	private float posy;
+	private int amount;
+	private Font font;
+	private Text text;
 	private boolean textNeedsUpdating;
 	public PlaceableSidebarItem(float posx, float posy, SidebarItemCreator creator, int startamount, Font font, GL10 gl) {
 		icon = new GuiEntity();

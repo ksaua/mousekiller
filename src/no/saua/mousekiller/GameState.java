@@ -25,22 +25,21 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 public class GameState extends State implements SidebarListener {
-	public Map map;
+	private Map map;
 	
-	public ArrayList<Entity> entities; 
-//	ArrayList<Bomb> bombs;
+	private ArrayList<Entity> entities; 
 	
-	CollisionGroup collisionGroup;
+	private CollisionGroup collisionGroup;
 	
-	Camera camera;
+	private Camera camera;
 	
-	Sidebar sidebar;
-	PlaceableSidebarItem sideBomb, sideStopSign, sideMale, sideFemale;
+	private Sidebar sidebar;
+	private PlaceableSidebarItem sideBomb, sideStopSign, sideMale, sideFemale;
 	
-	public Engine engine;
-	FPSText fpstext;
+	private Engine engine;
+	private FPSText fpstext;
 	
-	Font font;
+	private Font font;
 	
 	public synchronized void init(Engine e, GL10 gl, AssetManager assets) {
 		engine = e;
@@ -180,15 +179,14 @@ public class GameState extends State implements SidebarListener {
 			
 			if (e.collidable()) collisionGroup.addEntity(e);
 			entities.add(e);
-//			if (item == sideStopSign) {
-//				addCollideableEntity(new StopSign(map, tilex, tiley));
-//			} else if ((item == sideMale) || (item == sideFemale)) {
-//				addCollideableEntity(new GenderChanger(map, tilex, tiley, item == sideMale));
-//			} else if (item == sideBomb) {
-//				Bomb b = new Bomb(engine.gl, map, tilex, tiley);
-//				entities.add(b);
-//				bombs.add(b);
-//			}
 		}
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+	public Engine getEngine() {
+		return engine;
 	}
 }

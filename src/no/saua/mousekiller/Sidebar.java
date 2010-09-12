@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.graphics.Color;
-
 import no.saua.engine.Engine;
 import no.saua.engine.utils.Color4f;
 import no.saua.engine.utils.Utils;
