@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.graphics.Color;
+
+import no.saua.engine.Engine;
+import no.saua.engine.utils.Color4f;
 import no.saua.engine.utils.Utils;
 
 public class Sidebar {
@@ -13,9 +17,13 @@ public class Sidebar {
 	
 	private SidebarListener sidebarListener;
 	private ArrayList<SidebarItem> items;
+	private Color4f bgColor;
+	private Engine engine;
 	
-	public Sidebar() {
+	public Sidebar(GL10 gl, Engine e) {
 		items = new ArrayList<SidebarItem>();
+		bgColor = new Color4f(0,0,0,0.35f);
+		this.engine = e;
 	}
 	
 	public void addGuiEntity(SidebarItem si) {
@@ -31,6 +39,7 @@ public class Sidebar {
 	}
 	
 	public void render(GL10 gl) {
+		Engine.normalStrategy.render(gl, bgColor, 50, engine.getScreenHeight() / 2f, 100, engine.getScreenHeight());
 		for (SidebarItem item: items) {
 			item.render(gl);
 		}

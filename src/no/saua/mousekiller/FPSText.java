@@ -34,8 +34,9 @@ public class FPSText {
 	}
 	
 	private void updateText(GL10 gl) {
-		Log.e("Fpstext", "FPS: " + String.valueOf((int)engine.getFPS()));
+		Log.d("Fpstext", "FPS: " + String.valueOf((int)engine.getFPS()));
 		if (text != null) text.release(gl);
-		text = font.makeText(gl, String.valueOf((int)engine.getFPS()), 0, 0);
+		String t = String.valueOf((int)engine.getFPS());
+		text = font.makeText(gl, t, engine.getScreenWidth() - t.length() * font.getCharWidth(), engine.getScreenHeight() - font.getCharHeight());
 	}
 }

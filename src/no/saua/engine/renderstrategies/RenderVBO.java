@@ -8,9 +8,11 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
+import android.graphics.Color;
 import android.util.Log;
 
 import no.saua.engine.Texture;
+import no.saua.engine.utils.Color4f;
 
 public class RenderVBO implements GenericRenderStrategy {
 
@@ -104,12 +106,23 @@ public class RenderVBO implements GenericRenderStrategy {
 		}
 	}
 
-
+	public void render(GL10 gl, Color4f color, float posx, float posy, float width, float height) {
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+		gl.glColor4f(color.red, color.green, color.blue, color.alpha);
+		
+		draw(gl, posx, posy, width, height);
+		
+        gl.glColor4f(1f, 1f, 1f, 1f);
+	}
 
 	public void render(GL10 gl, Texture texture, float posx, float posy, float width, float height) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		texture.bind(gl);
 		
+		draw(gl, posx, posy, width, height);
+	}
+	
+	private void draw(GL10 gl,  float posx, float posy, float width, float height) {
 		gl.glPushMatrix();
 		
 		gl.glTranslatef(posx, posy, 0);
@@ -141,8 +154,6 @@ public class RenderVBO implements GenericRenderStrategy {
         
         gl.glPopMatrix();
 	}
-
-
 
 	public void render(GL10 gl, Texture texture, int width, int height) {
 		render(gl, texture, 0, 0, texture.getWidth(), texture.getHeight());	

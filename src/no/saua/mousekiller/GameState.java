@@ -82,7 +82,7 @@ public class GameState extends State implements SidebarListener {
 		sideStopSign = new SidebarItem(20, 60, StopSign.tex);
 		sideMale = new SidebarItem(20, 100, GenderChanger.texMale);
 		sideFemale = new SidebarItem(20, 140, GenderChanger.texFemale);
-		sidebar = new Sidebar();		
+		sidebar = new Sidebar(gl, e);		
 		sidebar.setListener(this);
 		sidebar.addGuiEntity(sideBomb);
 		sidebar.addGuiEntity(sideStopSign);
@@ -109,9 +109,9 @@ public class GameState extends State implements SidebarListener {
 		for (Bomb bomb: bombs) {
 			bomb.renderGrid(gl);
 		}
-		fpstext.render(gl);
 		gl.glLoadIdentity();
 		sidebar.render(gl);
+		fpstext.render(gl);
 	}
 
 	public synchronized void update(Engine e, float dt) {

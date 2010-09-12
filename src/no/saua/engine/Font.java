@@ -18,6 +18,8 @@ public class Font {
 	
 	public Font(Texture texture, String[] chars, int charWidth, int charHeight) {
 		this.texture = texture;
+		this.charWidth = charWidth;
+		this.charHeight = charHeight;
 		charPositions = new HashMap<Character, Vector2i>();
 		for (int y = 0; y < chars.length; y++) {
 			for (int x = 0; x < chars[y].length(); x++) {
@@ -34,10 +36,17 @@ public class Font {
 		TextureGrid tg = new TextureGrid(texture, text.length(), 1, charWidth, charHeight);
 		for (int i = 0; i < text.length(); i++) {
 			Vector2i charpos = charPositions.get(text.charAt(i));
-			Log.e("Font", "Charpos " + charpos + ". " + text.charAt(i));
 			tg.set(i, 0, charpos.x, charpos.y, Tilerotation.r0);
 		}
 		tg.generateBuffers(gl);
 		return new Text(tg, posx, posy);
+	}
+
+	public int getCharWidth() {
+		return charWidth;
+	}
+
+	public int getCharHeight() {
+		return charHeight;
 	}
 }

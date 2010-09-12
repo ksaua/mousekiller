@@ -7,7 +7,10 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.util.Log;
+
 import no.saua.engine.Texture;
+import no.saua.engine.utils.Color4f;
 
 public class RenderVertexArray implements GenericRenderStrategy {
 
@@ -85,5 +88,10 @@ public class RenderVertexArray implements GenericRenderStrategy {
 
 	public void render(GL10 gl, Texture texture) {
 		render(gl, texture, 0, 0);
+	}
+
+	public void render(GL10 gl, Color4f color, float posx, float posy, float width,
+			float height) {
+		Log.e("RenderDrawTexture", "Render color not implemented");	
 	}
 }
