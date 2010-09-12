@@ -143,7 +143,7 @@ public class GameState extends State implements SidebarListener {
 		
 		collisionGroup.check();
 		
-		fpstext.update(dt, e.gl);
+		fpstext.update(dt, e.getGL());
 	}
 
 	public synchronized void onTouchPress(Engine e, float x, float y) {
@@ -176,7 +176,7 @@ public class GameState extends State implements SidebarListener {
 		int tiley = map.getTileY(camera.gameY((int) y));
 		
 		if (map.isWalkable(tilex, tiley)) {
-			Entity e = item.createItem(engine.gl, map, tilex, tiley);
+			Entity e = item.createItem(engine.getGL(), map, tilex, tiley);
 			
 			if (e.collidable()) collisionGroup.addEntity(e);
 			entities.add(e);

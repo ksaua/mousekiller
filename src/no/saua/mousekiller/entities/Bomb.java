@@ -102,7 +102,7 @@ public class Bomb extends Entity {
 	public void update(float dt, GameState gs) {
 		super.update(dt, gs);
 		if (!initialized) {
-			grid.generateBuffers(gs.engine.gl);
+			grid.generateBuffers(gs.engine.getGL());
 			initialized = true;
 		}
 
@@ -115,7 +115,7 @@ public class Bomb extends Entity {
 		} else {
 			bangtime -= dt;
 			if (bangtime < 0) {
-				grid.releaseHardwareBuffers(gs.engine.gl);
+				grid.releaseHardwareBuffers(gs.engine.getGL());
 				this.remove();
 			} else {
 				bangAnimation.update(dt);

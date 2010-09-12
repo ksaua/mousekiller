@@ -33,7 +33,7 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 	ArrayList<State> states;
 	State currentstate;
 	
-	public GL10 gl;
+	private GL10 gl;
 	
 	boolean running = true;
 	
@@ -114,6 +114,8 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 		uiStrategy = new RenderDrawTexture();
 		normalStrategy.init(gl);
 		uiStrategy.init(gl);
+		
+		this.gl = null;
 	}
 	
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -129,6 +131,7 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		
+		this.gl = null;
 		Runtime.getRuntime().gc();
 	}
 	
@@ -147,12 +150,10 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 		running = true;
 	}
 	
-//	public GL10 getGL() {
-//		if (gl.glGetError() != GL10.GL_NO_ERROR) {
-//			Log.e("Engine", "GET GL: " + gl.glGetError() + ", " + gl.glGetString(gl.glGetError()));
-//		}
-//		return gl;
-//	}
+	public GL10 getGL() {
+		if (gl == null) Log.d("Engine", "Trying to access gl object outside of a GL-enabled context?");
+		return gl;
+	}
 
 
 
@@ -174,6 +175,7 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 			gl.glTranslatef(screenWidth / 2f, screenHeight / 2f, 0);
 
 			currentstate.render(this, gl);
+			this.gl = null;
 		}
 	}
 }
