@@ -1,4 +1,4 @@
-package no.saua.mousekiller;
+package no.saua.mousekiller.entities;
 
 import java.io.IOException;
 
@@ -8,10 +8,13 @@ import no.saua.engine.Entity;
 import no.saua.engine.Texture;
 import no.saua.engine.utils.Utils;
 import no.saua.engine.utils.Vector2i;
+import no.saua.mousekiller.Direction;
+import no.saua.mousekiller.GameState;
+import no.saua.mousekiller.Map;
 import android.content.res.AssetManager;
 
 public class Mouse extends Entity {
-	private static final float speed = 25;
+	private static final float speed = 45;
 
 	private static Texture male;
 	private static Texture female;

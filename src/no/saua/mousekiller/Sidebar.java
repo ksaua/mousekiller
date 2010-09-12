@@ -12,25 +12,25 @@ import no.saua.engine.utils.Utils;
 
 public class Sidebar {
 	public interface SidebarListener {
-		public void sidebarItemDragged(SidebarItem item, float x, float y);
+		public void sidebarItemDragged(PlaceableSidebarItem item, float x, float y);
 	}
 	
 	private SidebarListener sidebarListener;
-	private ArrayList<SidebarItem> items;
+	private ArrayList<PlaceableSidebarItem> items;
 	private Color4f bgColor;
 	private Engine engine;
 	
 	public Sidebar(GL10 gl, Engine e) {
-		items = new ArrayList<SidebarItem>();
-		bgColor = new Color4f(0,0,0,0.35f);
+		items = new ArrayList<PlaceableSidebarItem>();
+		bgColor = new Color4f(0,0,0,0.45f);
 		this.engine = e;
 	}
 	
-	public void addGuiEntity(SidebarItem si) {
+	public void addSidebarEntity(PlaceableSidebarItem si) {
 		items.add(si);
 	}
 	
-	public void removeGuiEntity(SidebarItem si) {
+	public void removeGuiEntity(PlaceableSidebarItem si) {
 		items.remove(si);
 	}
 	
@@ -39,21 +39,21 @@ public class Sidebar {
 	}
 	
 	public void render(GL10 gl) {
-		Engine.normalStrategy.render(gl, bgColor, 50, engine.getScreenHeight() / 2f, 100, engine.getScreenHeight());
-		for (SidebarItem item: items) {
+		Engine.normalStrategy.render(gl, bgColor, 36, engine.getScreenHeight() / 2f, 72, engine.getScreenHeight());
+		for (PlaceableSidebarItem item: items) {
 			item.render(gl);
 		}
 	}
 	
 	public void drag(float startx, float starty, float x, float y, boolean done) {
-		for (SidebarItem item: items) {
+		for (PlaceableSidebarItem item: items) {
 			if (item.isDraggable()) {
-				if (Utils.distanceSquared(startx, starty, item.getOrigX(), item.getOrigY()) < item.getCollisionRadius() * item.getCollisionRadius()) {
+				if (Utils.distanceSquared(startx, starty, item.getOrigX(), item.getOrigY()) < item.getIconRadius() * item.getIconRadius()) {
 					if (!done) {
-						item.setPosition(x, y);
+						item.setIconPosition(x, y);
 					} else {
 						sidebarListener.sidebarItemDragged(item, x, y);
-						item.resetPosition();
+						item.resetIconPosition();
 					}
 					return;
 				}

@@ -230,7 +230,7 @@ public class TextureGrid {
 			gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
 
 			if (vertexbufferId == 0 || texturebufferId == 0 || indexbufferId == 0 || gl11.glGetError() != 0) {
-				Log.e("TextureGridASADFSA", "Not available: " + gl11.glGetError());
+				Log.e("TextureGridASADFSA", "Not available: " + gl11.glGetString(gl11.glGetError()));
 			}
 		} else {
 			Log.e("TextureGrid", "GL not gl11");
@@ -275,7 +275,7 @@ public class TextureGrid {
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         
 		if (vertexbufferId == 0 || texturebufferId == 0 || indexbufferId == 0 || gl11.glGetError() != 0) {
-			Log.e("TextureGrid", vertexbufferId + ", " + texturebufferId + ", " + indexbufferId + ", " + gl11.glGetError());
+//			Log.e("TextureGrid", vertexbufferId + ", " + texturebufferId + ", " + indexbufferId + ", " + gl11.glGetError());
 		}
 	}
 }

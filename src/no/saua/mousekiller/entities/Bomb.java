@@ -1,16 +1,29 @@
-package no.saua.mousekiller;
+package no.saua.mousekiller.entities;
 
 import java.io.IOException;
 
 import javax.microedition.khronos.opengles.GL10;
 
 import no.saua.engine.Animation;
+import no.saua.engine.Engine;
 import no.saua.engine.Entity;
 import no.saua.engine.Grid;
 import no.saua.engine.Texture;
+import no.saua.mousekiller.GameState;
+import no.saua.mousekiller.Map;
+import no.saua.mousekiller.PlaceableSidebarItem.SidebarItemCreator;
 import android.content.res.AssetManager;
 
 public class Bomb extends Entity {
+	
+	public static class BombCreator implements SidebarItemCreator {
+		public  Entity createItem(GL10 gl, Map map, int tilex, int tiley) {
+			return new Bomb(gl, map, tilex, tiley);
+		}
+
+		public Texture getIconTexture() { return bomb[0]; }
+	}
+	
 	private static final int max_tiles = 5;
 	public static Texture[] bomb;
 	private static Texture[] bang;
@@ -80,8 +93,9 @@ public class Bomb extends Entity {
 		return i - 1;
 	}
 	
-	public void renderGrid(GL10 gl) {
+	public void render(GL10 gl) {
 		if (exploded) grid.render(gl, bangAnimation.getCurrentTexture());
+		else super.render(gl);
 	}
 	
 	@Override
@@ -137,5 +151,9 @@ public class Bomb extends Entity {
 		for (int i = 0; i < bang.length; i++) {
 			bang[i] = Texture.loadTexture(gl, assets.open("textures/bang" + (i + 1) + ".png"));;
 		}
+	}
+
+	public Entity createItem(GL10 gl, Map map, int tilex, int tiley) {
+		return null;
 	}
 }

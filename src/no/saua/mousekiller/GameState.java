@@ -13,29 +13,39 @@ import no.saua.engine.Texture;
 import no.saua.engine.collisionsystem.CollisionGroup;
 import no.saua.engine.collisionsystem.CollisionHandler;
 import no.saua.mousekiller.Sidebar.SidebarListener;
+import no.saua.mousekiller.entities.Bomb;
+import no.saua.mousekiller.entities.GenderChanger;
+import no.saua.mousekiller.entities.Mouse;
+import no.saua.mousekiller.entities.StopSign;
+import no.saua.mousekiller.entities.Bomb.BombCreator;
+import no.saua.mousekiller.entities.GenderChanger.MaleChangerCreator;
+import no.saua.mousekiller.entities.GenderChanger.FemaleChangerCreator;
+import no.saua.mousekiller.entities.StopSign.StopSignCreator;
 import android.content.res.AssetManager;
 import android.util.Log;
 
 public class GameState extends State implements SidebarListener {
-	Map map;
+	public Map map;
 	
-	ArrayList<Entity> entities; 
-	ArrayList<Bomb> bombs;
+	public ArrayList<Entity> entities; 
+//	ArrayList<Bomb> bombs;
 	
 	CollisionGroup collisionGroup;
 	
 	Camera camera;
 	
 	Sidebar sidebar;
-	SidebarItem sideBomb, sideStopSign, sideMale, sideFemale;
+	PlaceableSidebarItem sideBomb, sideStopSign, sideMale, sideFemale;
 	
-	Engine engine;
+	public Engine engine;
 	FPSText fpstext;
+	
+	Font font;
 	
 	public synchronized void init(Engine e, GL10 gl, AssetManager assets) {
 		engine = e;
 		try {
-			Font font = new Font(Texture.loadTexture(gl, assets.open("fonts/monospacenumbers.png")), "1234567890", 12, 15);
+			font = new Font(Texture.loadTexture(gl, assets.open("fonts/monospacenumbers.png")), "1234567890", 12, 15);
 			fpstext = new FPSText(e, font);
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -56,7 +66,7 @@ public class GameState extends State implements SidebarListener {
 		}
 		
 		entities = new ArrayList<Entity>();
-		bombs = new ArrayList<Bomb>();
+//		bombs = new ArrayList<Bomb>();
 		
 		collisionGroup = new CollisionGroup();
 		collisionGroup.addHandler(new CollisionHandler() {
@@ -77,17 +87,16 @@ public class GameState extends State implements SidebarListener {
 		});
 		
 		camera = new Camera(map, e.getScreenWidth(), e.getScreenHeight());
-		
-		sideBomb = new SidebarItem(20, 20, Bomb.bomb[0]);
-		sideStopSign = new SidebarItem(20, 60, StopSign.tex);
-		sideMale = new SidebarItem(20, 100, GenderChanger.texMale);
-		sideFemale = new SidebarItem(20, 140, GenderChanger.texFemale);
+		sideBomb = new PlaceableSidebarItem(20, 20, new BombCreator(), 3, font, gl);
+		sideStopSign = new PlaceableSidebarItem(20, 60, new StopSignCreator(), 2, font, gl);
+		sideMale = new PlaceableSidebarItem(20, 100, new MaleChangerCreator(), 2, font, gl);
+		sideFemale = new PlaceableSidebarItem(20, 140, new FemaleChangerCreator(), 2, font, gl);
 		sidebar = new Sidebar(gl, e);		
 		sidebar.setListener(this);
-		sidebar.addGuiEntity(sideBomb);
-		sidebar.addGuiEntity(sideStopSign);
-		sidebar.addGuiEntity(sideMale);
-		sidebar.addGuiEntity(sideFemale);
+		sidebar.addSidebarEntity(sideBomb);
+		sidebar.addSidebarEntity(sideStopSign);
+		sidebar.addSidebarEntity(sideMale);
+		sidebar.addSidebarEntity(sideFemale);
 		
 		addCollideableEntity(new Mouse(map));
 		addCollideableEntity(new Mouse(map));
@@ -106,9 +115,9 @@ public class GameState extends State implements SidebarListener {
 			en.render(gl);
 		} 
 		
-		for (Bomb bomb: bombs) {
-			bomb.renderGrid(gl);
-		}
+//		for (Bomb bomb: bombs) {
+//			bomb.renderGrid(gl);
+//		}
 		gl.glLoadIdentity();
 		sidebar.render(gl);
 		fpstext.render(gl);
@@ -124,10 +133,10 @@ public class GameState extends State implements SidebarListener {
 			}
 		}
 		
-		for (int i = 0; i < bombs.size(); i++) {
-			if (bombs.get(i).isRemoving())
-				bombs.remove(i);
-		}
+//		for (int i = 0; i < bombs.size(); i++) {
+//			if (bombs.get(i).isRemoving())
+//				bombs.remove(i);
+//		}
 //		if (e.getGL().glGetError() != 0) {
 //			Log.e("Grid", "VBO Not available: " + e.getGL().glGetError() + ", " + e.getGL().glGetString(e.getGL().glGetError()));
 //		}
@@ -159,7 +168,7 @@ public class GameState extends State implements SidebarListener {
 		collisionGroup.addEntity(entity);
 	}
 
-	public void sidebarItemDragged(SidebarItem item, float x, float y) {
+	public void sidebarItemDragged(PlaceableSidebarItem item, float x, float y) {
 		x -= engine.getWidth() / 2f;
 		y -= engine.getHeight() / 2f;
 		
@@ -167,15 +176,19 @@ public class GameState extends State implements SidebarListener {
 		int tiley = map.getTileY(camera.gameY((int) y));
 		
 		if (map.isWalkable(tilex, tiley)) {
-			if (item == sideStopSign) {
-				addCollideableEntity(new StopSign(map, tilex, tiley));
-			} else if ((item == sideMale) || (item == sideFemale)) {
-				addCollideableEntity(new GenderChanger(map, tilex, tiley, item == sideMale));
-			} else if (item == sideBomb) {
-				Bomb b = new Bomb(engine.gl, map, tilex, tiley);
-				entities.add(b);
-				bombs.add(b);
-			}
+			Entity e = item.createItem(engine.gl, map, tilex, tiley);
+			
+			if (e.collidable()) collisionGroup.addEntity(e);
+			entities.add(e);
+//			if (item == sideStopSign) {
+//				addCollideableEntity(new StopSign(map, tilex, tiley));
+//			} else if ((item == sideMale) || (item == sideFemale)) {
+//				addCollideableEntity(new GenderChanger(map, tilex, tiley, item == sideMale));
+//			} else if (item == sideBomb) {
+//				Bomb b = new Bomb(engine.gl, map, tilex, tiley);
+//				entities.add(b);
+//				bombs.add(b);
+//			}
 		}
 	}
 }
