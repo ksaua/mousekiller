@@ -109,50 +109,50 @@ public class RenderVBO implements GenericRenderStrategy {
 	public void render(GL10 gl, Color4f color, float posx, float posy, float width, float height) {
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 		gl.glColor4f(color.red, color.green, color.blue, color.alpha);
-		
+
 		draw(gl, posx, posy, width, height);
-		
-        gl.glColor4f(1f, 1f, 1f, 1f);
+
+		gl.glColor4f(1f, 1f, 1f, 1f);
 	}
 
 	public void render(GL10 gl, Texture texture, float posx, float posy, float width, float height) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		texture.bind(gl);
-		
+
 		draw(gl, posx, posy, width, height);
 	}
-	
+
 	private void draw(GL10 gl,  float posx, float posy, float width, float height) {
 		gl.glPushMatrix();
-		
+
 		gl.glTranslatef(posx, posy, 0);
 		gl.glScalef(width, height, 1f);
-		
 
-		
+
+
 		GL11 gl11 = (GL11)gl;
-        // draw using hardware buffers
-        gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, vbId);
-        gl11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-        
-        gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, tbId);
-        gl11.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+		// draw using hardware buffers
+		gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, vbId);
+		gl11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
 
-        
-        gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, ibId);
-        
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-        
-        gl11.glDrawElements(GL11.GL_TRIANGLES, indexBuffer.capacity(), GL11.GL_UNSIGNED_SHORT, 0);
-        
-        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-        
-        gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-        gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
-        
-        gl.glPopMatrix();
+		gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, tbId);
+		gl11.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+
+
+		gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, ibId);
+
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+		gl11.glDrawElements(GL11.GL_TRIANGLES, indexBuffer.capacity(), GL11.GL_UNSIGNED_SHORT, 0);
+
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+
+		gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+		gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		gl.glPopMatrix();
 	}
 
 	public void render(GL10 gl, Texture texture, int width, int height) {
