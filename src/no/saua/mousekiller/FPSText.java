@@ -6,18 +6,19 @@ import android.util.Log;
 
 import no.saua.engine.Engine;
 import no.saua.engine.Font;
-import no.saua.engine.Text;
+import no.saua.engine.GuiText;
 
 public class FPSText {
 	private final static int updateFrequency = 5;
 	private float timeToUpdate = 0;
 	private Engine engine;
 	private Font font;
-	private Text text;
+	private GuiText text;
 	
-	public FPSText(Engine e, Font font) {
+	public FPSText(Engine e, GL10 gl, Font font) {
 		engine = e;
 		this.font = font;
+		text = new GuiText(gl, font, "0", e.getScreenWidth() - font.getCharWidth() * 2, e.getScreenHeight() - font.getCharHeight() * 1);
 	}
 	
 	public void update(float dt, GL10 gl) {
@@ -35,8 +36,6 @@ public class FPSText {
 	
 	private void updateText(GL10 gl) {
 		Log.d("Fpstext", "FPS: " + String.valueOf((int)engine.getFPS()));
-		if (text != null) text.release(gl);
-		String t = String.valueOf((int)engine.getFPS());
-		text = font.makeText(gl, t, engine.getScreenWidth() - t.length() * font.getCharWidth(), engine.getScreenHeight() - font.getCharHeight());
+		text.setText(gl, String.valueOf((int)engine.getFPS()));
 	}
 }

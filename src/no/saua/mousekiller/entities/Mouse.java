@@ -11,6 +11,7 @@ import no.saua.engine.utils.Vector2i;
 import no.saua.mousekiller.Direction;
 import no.saua.mousekiller.GameState;
 import no.saua.mousekiller.Map;
+import no.saua.mousekiller.MouseChangeListener;
 import android.content.res.AssetManager;
 
 public class Mouse extends Entity {
@@ -31,14 +32,16 @@ public class Mouse extends Entity {
 	private float stateTime;
 
 	private Map map;
+	private MouseChangeListener mcl;
 	
-	public Mouse(Map map) {
-		this(getRandomSex(), map);
+	public Mouse(MouseChangeListener mcl, Map map) {
+		this(mcl, map, getRandomSex());
 	}
 	
-	public Mouse(Sex sex, Map map) {
+	public Mouse(MouseChangeListener mcl, Map map, Sex sex) {
 		this.map = map;
 		this.sex = sex;
+		this.mcl = mcl;
 		Vector2i p = map.getRandomRoad();
 		setPosition(map.getTileCenterX(p.x), map.getTileCenterY(p.y));
 		findNewDirection(map);
@@ -47,9 +50,10 @@ public class Mouse extends Entity {
 		setCollidable(true);
 	}
 	
-	public Mouse(Sex sex, Map map, float posx, float posy) {
+	public Mouse(MouseChangeListener mcl, Map map, Sex sex, float posx, float posy) {
 		this.map = map;
 		this.sex = sex;
+		this.mcl = mcl;
 		setPosition(posx, posy);
 		findNewDirection(map);
 		setState(State.idle); // Also fixes sprite
@@ -142,7 +146,7 @@ public class Mouse extends Entity {
 			} else if (State.pregnant == state) {
 				if (stateTime < 0) {
 					setState(State.idle);
-					Mouse m = new Mouse(getRandomSex(), map, posx, posy);
+					Mouse m = new Mouse(mcl, map, getRandomSex(), posx, posy);
 					m.setDirection(Direction.getReverseDirection(direction));
 					m.setState(State.growing);
 					gs.addCollideableEntity(m);
@@ -150,6 +154,8 @@ public class Mouse extends Entity {
 				moveInDirection(dt, map);
 			} else if (State.growing == state) {
 				if (stateTime < 0) {
+					if (sex == Mouse.Sex.male) mcl.modifyMiceAmounts(1, 0);
+					else mcl.modifyMiceAmounts(0, 1);
 					setState(State.idle);
 				}
 				moveInDirection(dt, map);
@@ -201,5 +207,9 @@ public class Mouse extends Entity {
 		male = Texture.loadTexture(gl, assets.open("textures/mouseblue.png"));
 		female = Texture.loadTexture(gl, assets.open("textures/mousered.png"));
 		child = Texture.loadTexture(gl, assets.open("textures/mousechild.png"));
+	}
+
+	public Sex getSex() {
+		return sex;
 	}
 }

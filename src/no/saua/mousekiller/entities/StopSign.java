@@ -8,12 +8,13 @@ import no.saua.engine.Entity;
 import no.saua.engine.Texture;
 import no.saua.mousekiller.Direction;
 import no.saua.mousekiller.Map;
+import no.saua.mousekiller.MouseChangeListener;
 import no.saua.mousekiller.PlaceableSidebarItem.SidebarItemCreator;
 import android.content.res.AssetManager;
 
 public class StopSign extends Entity {
 	public static class StopSignCreator implements SidebarItemCreator {
-		public Entity createItem(GL10 gl, Map map, int tilex, int tiley) {
+		public Entity createItem(GL10 gl, MouseChangeListener mcl, Map map, int tilex, int tiley) {
 			return new StopSign(map, tilex, tiley);
 		}
 

@@ -7,20 +7,21 @@ import javax.microedition.khronos.opengles.GL10;
 import no.saua.engine.Entity;
 import no.saua.engine.Texture;
 import no.saua.mousekiller.Map;
+import no.saua.mousekiller.MouseChangeListener;
 import no.saua.mousekiller.PlaceableSidebarItem.SidebarItemCreator;
 import android.content.res.AssetManager;
 
 public class GenderChanger extends Entity {
 	public static class MaleChangerCreator implements SidebarItemCreator {
-		public Entity createItem(GL10 gl, Map map, int tilex, int tiley) {
-			return new GenderChanger(map, tilex, tiley, true);
+		public Entity createItem(GL10 gl, MouseChangeListener mcl, Map map, int tilex, int tiley) {
+			return new GenderChanger(mcl, map, tilex, tiley, true);
 		}
 		public Texture getIconTexture() { return texMale; }
 	}
 	
 	public static class FemaleChangerCreator implements SidebarItemCreator {
-		public Entity createItem(GL10 gl, Map map, int tilex, int tiley) {
-			return new GenderChanger(map, tilex, tiley, false);
+		public Entity createItem(GL10 gl, MouseChangeListener mcl, Map map, int tilex, int tiley) {
+			return new GenderChanger(mcl, map, tilex, tiley, false);
 		}
 		public Texture getIconTexture() { return texFemale; }
 	}
@@ -28,8 +29,10 @@ public class GenderChanger extends Entity {
 	public static Texture texMale;
 	public static Texture texFemale;
 	private boolean male;
-	public GenderChanger(Map map, int tilex, int tiley, boolean male) {
+	private MouseChangeListener mcl;
+	public GenderChanger(MouseChangeListener mcl, Map map, int tilex, int tiley, boolean male) {
 		this.male = male;
+		this.mcl = mcl;
 		setPosition(map.getTileCenterX(tilex), map.getTileCenterY(tiley));
 		setCollisionRadius(12);
 		setCollidable(true);
@@ -38,7 +41,14 @@ public class GenderChanger extends Entity {
 	}
 	
 	public void collision(Mouse mouse) {
-		mouse.setSex(male ? Mouse.Sex.male : Mouse.Sex.female);
+		if (mouse.getSex() == Mouse.Sex.male != male) {
+			if (mouse.getSex() == Mouse.Sex.male)
+				mcl.modifyMiceAmounts(-1, 1);
+			else
+				mcl.modifyMiceAmounts(1, -1);
+			mouse.setSex(male ? Mouse.Sex.male : Mouse.Sex.female);
+		}
+		
 		remove();
 	}
 	

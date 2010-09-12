@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import javax.microedition.khronos.opengles.GL10;
 
 import no.saua.engine.Engine;
+import no.saua.engine.Font;
+import no.saua.engine.GuiText;
 import no.saua.engine.utils.Color4f;
 import no.saua.engine.utils.Utils;
 
@@ -17,11 +19,15 @@ public class Sidebar {
 	private ArrayList<PlaceableSidebarItem> items;
 	private Color4f bgColor;
 	private Engine engine;
+	private GuiText males;
+	private GuiText females;
 	
-	public Sidebar(GL10 gl, Engine e) {
+	public Sidebar(GL10 gl, Engine e, Font font) {
 		items = new ArrayList<PlaceableSidebarItem>();
 		bgColor = new Color4f(0,0,0,0.45f);
 		this.engine = e;
+		males = new GuiText(gl, font, "0", 20, e.getScreenHeight() - 20);
+		females = new GuiText(gl, font, "0", 20, e.getScreenHeight() - 40);
 	}
 	
 	public void addSidebarEntity(PlaceableSidebarItem si) {
@@ -41,6 +47,13 @@ public class Sidebar {
 		for (PlaceableSidebarItem item: items) {
 			item.render(gl);
 		}
+		males.render(gl);
+		females.render(gl);
+	}
+	
+	public void setMiceAmount(GL10 gl, int males, int females) {
+		this.males.setText(gl, String.valueOf(males));
+		this.females.setText(gl, String.valueOf(females));
 	}
 	
 	public void drag(float startx, float starty, float x, float y, boolean done) {

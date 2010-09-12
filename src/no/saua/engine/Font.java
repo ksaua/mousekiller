@@ -31,15 +31,12 @@ public class Font {
 	public Font(Texture texture, String string, int charWidth, int charHeight) {
 		this(texture, new String[]{string}, charWidth, charHeight);
 	}
-
-	public Text makeText(GL10 gl, String text, int posx, int posy) {
-		TextureGrid tg = new TextureGrid(texture, text.length(), 1, charWidth, charHeight);
-		for (int i = 0; i < text.length(); i++) {
-			Vector2i charpos = charPositions.get(text.charAt(i));
-			tg.set(i, 0, charpos.x, charpos.y, Tilerotation.r0);
-		}
-		tg.generateBuffers(gl);
-		return new Text(tg, posx, posy);
+	
+	public int getCharPositionX(Character c) {
+		return charPositions.get(c).x;
+	}
+	public int getCharPositionY(Character c) {
+		return charPositions.get(c).y;
 	}
 
 	public int getCharWidth() {
@@ -48,5 +45,9 @@ public class Font {
 
 	public int getCharHeight() {
 		return charHeight;
+	}
+
+	public Texture getTexture() {
+		return texture;
 	}
 }

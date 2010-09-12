@@ -2,6 +2,7 @@ package no.saua.mousekiller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -24,10 +25,10 @@ import no.saua.mousekiller.entities.StopSign.StopSignCreator;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-public class GameState extends State implements SidebarListener {
+public class GameState extends State implements SidebarListener, MouseChangeListener {
 	private Map map;
 	
-	private ArrayList<Entity> entities; 
+	private CopyOnWriteArrayList<Entity> entities;
 	
 	private CollisionGroup collisionGroup;
 	
@@ -41,11 +42,15 @@ public class GameState extends State implements SidebarListener {
 	
 	private Font font;
 	
+	private int males;
+	private int females;
+	
 	public synchronized void init(Engine e, GL10 gl, AssetManager assets) {
 		engine = e;
+		entities = new CopyOnWriteArrayList<Entity>();
 		try {
 			font = new Font(Texture.loadTexture(gl, assets.open("fonts/monospacenumbers.png")), "1234567890", 12, 15);
-			fpstext = new FPSText(e, font);
+			fpstext = new FPSText(e, gl, font);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			System.exit(-1);
@@ -64,7 +69,7 @@ public class GameState extends State implements SidebarListener {
 			System.exit(1);
 		}
 		
-		entities = new ArrayList<Entity>();
+//		entities = new ArrayList<Entity>();
 //		bombs = new ArrayList<Bomb>();
 		
 		collisionGroup = new CollisionGroup();
@@ -90,18 +95,26 @@ public class GameState extends State implements SidebarListener {
 		sideStopSign = new PlaceableSidebarItem(20, 60, new StopSignCreator(), 2, font, gl);
 		sideMale = new PlaceableSidebarItem(20, 100, new MaleChangerCreator(), 2, font, gl);
 		sideFemale = new PlaceableSidebarItem(20, 140, new FemaleChangerCreator(), 2, font, gl);
-		sidebar = new Sidebar(gl, e);		
+		sidebar = new Sidebar(gl,e, font);		
 		sidebar.setListener(this);
 		sidebar.addSidebarEntity(sideBomb);
 		sidebar.addSidebarEntity(sideStopSign);
 		sidebar.addSidebarEntity(sideMale);
 		sidebar.addSidebarEntity(sideFemale);
 		
-		addCollideableEntity(new Mouse(map));
-		addCollideableEntity(new Mouse(map));
-		addCollideableEntity(new Mouse(map));
-		addCollideableEntity(new Mouse(map));
-		addCollideableEntity(new Mouse(map));
+		addCollideableEntity(new Mouse(this, map));
+		addCollideableEntity(new Mouse(this, map));
+		addCollideableEntity(new Mouse(this, map));
+		addCollideableEntity(new Mouse(this, map));
+		addCollideableEntity(new Mouse(this, map));
+		
+		for (Entity en: entities) {
+			if (en instanceof Mouse) {
+				if (((Mouse) en).getSex() == Mouse.Sex.male) males++;
+				else females++;
+			}
+		}
+		sidebar.setMiceAmount(gl, males, females);
 	}
 
 	public synchronized void render(Engine e, GL10 gl) {
@@ -131,7 +144,7 @@ public class GameState extends State implements SidebarListener {
 				entities.get(i).update(dt, this);
 			}
 		}
-		
+				
 //		for (int i = 0; i < bombs.size(); i++) {
 //			if (bombs.get(i).isRemoving())
 //				bombs.remove(i);
@@ -143,6 +156,7 @@ public class GameState extends State implements SidebarListener {
 		collisionGroup.check();
 		
 		fpstext.update(dt, e.getGL());
+		sidebar.setMiceAmount(e.getGL(), males, females);
 	}
 
 	public synchronized void onTouchPress(Engine e, float x, float y) {
@@ -166,6 +180,10 @@ public class GameState extends State implements SidebarListener {
 		entities.add(entity);
 		collisionGroup.addEntity(entity);
 	}
+	
+	public CopyOnWriteArrayList<Entity> getEntities() {
+		return entities;
+	}
 
 	public void sidebarItemDragged(PlaceableSidebarItem item, float x, float y) {
 		x -= engine.getWidth() / 2f;
@@ -175,7 +193,7 @@ public class GameState extends State implements SidebarListener {
 		int tiley = map.getTileY(camera.gameY((int) y));
 		
 		if (map.isWalkable(tilex, tiley)) {
-			Entity e = item.createItem(engine.getGL(), map, tilex, tiley);
+			Entity e = item.createItem(engine.getGL(), this, map, tilex, tiley);
 			
 			if (e.collidable()) collisionGroup.addEntity(e);
 			entities.add(e);
@@ -188,5 +206,11 @@ public class GameState extends State implements SidebarListener {
 
 	public Engine getEngine() {
 		return engine;
+	}
+
+	public void modifyMiceAmounts(int dmale, int dfemale) {
+		males += dmale;
+		females += dfemale;
+		sidebar.setMiceAmount(engine.getGL(), males, females);
 	}
 }

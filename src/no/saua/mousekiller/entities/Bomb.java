@@ -7,17 +7,19 @@ import javax.microedition.khronos.opengles.GL10;
 import no.saua.engine.Animation;
 import no.saua.engine.Entity;
 import no.saua.engine.Grid;
+import no.saua.engine.State;
 import no.saua.engine.Texture;
 import no.saua.mousekiller.GameState;
 import no.saua.mousekiller.Map;
+import no.saua.mousekiller.MouseChangeListener;
 import no.saua.mousekiller.PlaceableSidebarItem.SidebarItemCreator;
 import android.content.res.AssetManager;
 
 public class Bomb extends Entity {
 	
 	public static class BombCreator implements SidebarItemCreator {
-		public  Entity createItem(GL10 gl, Map map, int tilex, int tiley) {
-			return new Bomb(gl, map, tilex, tiley);
+		public  Entity createItem(GL10 gl, MouseChangeListener mcl, Map map, int tilex, int tiley) {
+			return new Bomb(gl, mcl, map, tilex, tiley);
 		}
 
 		public Texture getIconTexture() { return bomb[0]; }
@@ -37,10 +39,12 @@ public class Bomb extends Entity {
 	
 	private int tilex, tiley;
 	private int walkableLeft, walkableRight, walkableUp, walkableDown;
+	private MouseChangeListener mcl;
 	
-	public Bomb(GL10 gl, Map map, int tilex, int tiley) {
+	public Bomb(GL10 gl, MouseChangeListener mcl, Map map, int tilex, int tiley) {
 		this.tilex = tilex;
 		this.tiley = tiley;
+		this.mcl = mcl;
 
 		setPosition(map.getTileCenterX(tilex), map.getTileCenterY(tiley));
 		setCollisionRadius(12);
@@ -132,10 +136,15 @@ public class Bomb extends Entity {
 			if (entity != this) {
 				int etx = gs.getMap().getTileX(entity.getX());
 				int ety = gs.getMap().getTileY(entity.getY());
-				if (tiley == ety && (tilex - walkableLeft <= etx && etx <= tilex + walkableRight)) 
+				if ((tiley == ety && (tilex - walkableLeft <= etx && etx <= tilex + walkableRight)) ||
+					(tilex == etx && (tiley - walkableDown <= ety && ety <= tiley + walkableUp))) {
+					if (entity instanceof Mouse) {
+						if (((Mouse) entity).getSex() == Mouse.Sex.male) mcl.modifyMiceAmounts(-1, 0);
+						else mcl.modifyMiceAmounts(0, -1);
+					}
 					entity.remove();
-				else if (tilex == etx && (tiley - walkableDown <= ety && ety <= tiley + walkableUp))
-					entity.remove();
+				}
+
 			}
 		}
 	}

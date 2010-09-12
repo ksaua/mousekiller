@@ -105,9 +105,7 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		
-		for (State state: states) {
-			state.init(this, gl, getResources().getAssets());
-		}
+
 		
 		// Set up render strategies
 		normalStrategy = new RenderVBO();
@@ -130,6 +128,10 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 		GLU.gluOrtho2D(gl, 0, width, 0, height);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
+		
+		for (State state: states) {
+			state.init(this, gl, getResources().getAssets());
+		}
 		
 		this.gl = null;
 		Runtime.getRuntime().gc();

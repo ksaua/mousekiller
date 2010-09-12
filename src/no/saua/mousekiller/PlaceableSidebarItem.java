@@ -5,12 +5,12 @@ import javax.microedition.khronos.opengles.GL10;
 import no.saua.engine.Entity;
 import no.saua.engine.Font;
 import no.saua.engine.GuiEntity;
-import no.saua.engine.Text;
+import no.saua.engine.GuiText;
 import no.saua.engine.Texture;
 
 public class PlaceableSidebarItem  {
 	public interface SidebarItemCreator {
-		public Entity createItem(GL10 gl, Map map, int tilex, int tiley);
+		public Entity createItem(GL10 gl, MouseChangeListener mcl, Map map, int tilex, int tiley);
 		public Texture getIconTexture();
 	}
 	
@@ -21,20 +21,20 @@ public class PlaceableSidebarItem  {
 	private SidebarItemCreator creator;
 	
 	private int amount;
-	private Font font;
-	private Text text;
+	private GuiText text;
 	private boolean textNeedsUpdating;
 	public PlaceableSidebarItem(float posx, float posy, SidebarItemCreator creator, int startamount, Font font, GL10 gl) {
 		icon = new GuiEntity();
 		icon.setPosition(posx, posy);
 		icon.setTexture(creator.getIconTexture());
 		
-		this.font = font;
 		this.creator = creator;
 		this.amount = startamount;
 		
 		origx = posx;
 		origy = posy;
+		
+		text = new GuiText(gl, font, String.valueOf(startamount), (int)(origx + 23), (int)(origy - font.getCharHeight() / 2));
 		
 		updateText(gl);
 	}
@@ -49,8 +49,7 @@ public class PlaceableSidebarItem  {
 	}
 	
 	private void updateText(GL10 gl) {
-		if (text != null) text.release(gl);
-		text = font.makeText(gl, String.valueOf(amount), (int)(origx + 23), (int)(origy - font.getCharHeight() / 2));
+		text.setText(gl, String.valueOf(amount));
 	}
 
 	public boolean isDraggable() {
@@ -77,9 +76,9 @@ public class PlaceableSidebarItem  {
 		return 25;
 	}
 
-	public Entity createItem(GL10 gl, Map map, int tilex, int tiley) {
+	public Entity createItem(GL10 gl, MouseChangeListener mcl, Map map, int tilex, int tiley) {
 		amount -= 1;
 		textNeedsUpdating = true;
-		return creator.createItem(gl, map, tilex, tiley);
+		return creator.createItem(gl, mcl, map, tilex, tiley);
 	}
 }
