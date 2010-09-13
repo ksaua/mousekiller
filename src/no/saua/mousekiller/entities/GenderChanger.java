@@ -42,10 +42,12 @@ public class GenderChanger extends Entity {
 	
 	public void collision(Mouse mouse) {
 		if (mouse.getSex() == Mouse.Sex.male != male) {
-			if (mouse.getSex() == Mouse.Sex.male)
-				mcl.modifyMiceAmounts(-1, 1);
-			else
-				mcl.modifyMiceAmounts(1, -1);
+			if (mouse.getState() != Mouse.State.growing) { // Don't change if it's a child.
+				if (mouse.getSex() == Mouse.Sex.male)
+					mcl.modifyMiceAmounts(-1, 1);
+				else
+					mcl.modifyMiceAmounts(1, -1);
+			}
 			mouse.setSex(male ? Mouse.Sex.male : Mouse.Sex.female);
 		}
 		

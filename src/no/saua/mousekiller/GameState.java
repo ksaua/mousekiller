@@ -95,7 +95,7 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 		sideStopSign = new PlaceableSidebarItem(20, 60, new StopSignCreator(), 2, font, gl);
 		sideMale = new PlaceableSidebarItem(20, 100, new MaleChangerCreator(), 2, font, gl);
 		sideFemale = new PlaceableSidebarItem(20, 140, new FemaleChangerCreator(), 2, font, gl);
-		sidebar = new Sidebar(gl,e, font);		
+		sidebar = new Sidebar(gl, e, font);		
 		sidebar.setListener(this);
 		sidebar.addSidebarEntity(sideBomb);
 		sidebar.addSidebarEntity(sideStopSign);

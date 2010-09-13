@@ -17,12 +17,12 @@ import android.content.res.AssetManager;
 public class Mouse extends Entity {
 	private static final float speed = 45;
 
-	private static Texture male;
-	private static Texture female;
-	private static Texture child;
+	public static Texture male;
+	public static Texture female;
+	public static Texture child;
 	public enum Sex {male, female};
 
-	private enum State {idle, fucking, pregnant, growing}; 
+	public enum State {idle, fucking, pregnant, growing}; 
 	private Sex sex;
 	private State state;
 
@@ -211,5 +211,9 @@ public class Mouse extends Entity {
 
 	public Sex getSex() {
 		return sex;
+	}
+
+	public State getState() {
+		return state;
 	}
 }
