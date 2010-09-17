@@ -20,7 +20,8 @@ public class TextureGrid {
 	public enum Tilerotation {r0, r90, r180, r270};
 	
 	private Texture texture;
-	private int columns, rows;
+	private int tiles;
+//	private int columns, rows;
 	private int tilewidth, tileheight;
 	
 	private float[] vertices;
@@ -36,10 +37,9 @@ public class TextureGrid {
 //	private int textureRows;
 //	private int textureColumns;
 	
-	public TextureGrid(Texture texture, int columns, int rows, int tilewidth, int tileheight) {
+	public TextureGrid(Texture texture, int tiles, int tilewidth, int tileheight) {
 		this.texture = texture;
-		this.columns = columns;
-		this.rows = rows;
+		this.tiles = tiles;
 		this.tilewidth = tilewidth;
 		this.tileheight = tileheight;
 		
@@ -63,37 +63,15 @@ public class TextureGrid {
 		 * 0        1 4        5
 		 */
 		
-		int numTiles = columns * rows;
 		// Set up vertices 
-		int numVertices = 4 * numTiles;
+		int numVertices = 4 * tiles;
 		vertices = new float[numVertices * 2]; // 2 points per vertice
-		
-		for (int y = 0; y < rows; y++) {
-			for (int x = 0; x < columns; x++) {
-				int i = (y * columns + x) * 8; // Offset
-				// Bottom left corner
-				vertices[i + 0] = tilewidth * x;
-				vertices[i + 1] = tileheight * y;
-				
-				// Bottom right corner
-				vertices[i + 2] = tilewidth * (x + 1);
-				vertices[i + 3] = tileheight * y;
-				
-				// Top left corner
-				vertices[i + 4] = tilewidth * x;
-				vertices[i + 5] = tileheight * (y + 1);
-				
-				// Top right corner
-				vertices[i + 6] = tilewidth * (x + 1);
-				vertices[i + 7] = tileheight * (y + 1);
-			}
-		}
 		
 		// Set up indices
 		// Needs to be drawn as triangles, the first tile is drawn in this order: 0, 2, 3, 0, 1, 3. So it has 6 indices per square
 		
-		indices = new short[numTiles * 6];
-		for (int i = 0; i < numTiles; i++) {
+		indices = new short[tiles * 6];
+		for (int i = 0; i < tiles ; i++) {
 			indices[i * 6 + 0] = (short) (i * 4 + 0);
 			indices[i * 6 + 1] = (short) (i * 4 + 2);
 			indices[i * 6 + 2] = (short) (i * 4 + 3);
@@ -106,10 +84,29 @@ public class TextureGrid {
 		textureCoords = new float[numVertices * 2];
 	} 
 	
-	public void set(int column, int row, int textureX, int textureY, Tilerotation rotation) {
-		int j = row * columns + column; // Tiles it should jump over
-		int i = 2 * 4 * j; // Offset, 4 vertices per tile, 2 floats per vertex
+	public void set(int squarei, int x, int y, int textureX, int textureY, Tilerotation rotation) {
 		
+		// Set up the vertices
+		int vo = squarei * 8; // Offset
+		// Bottom left corner
+		vertices[vo + 0] = tilewidth * x;
+		vertices[vo + 1] = tileheight * y;
+		
+		// Bottom right corner
+		vertices[vo + 2] = tilewidth * (x + 1);
+		vertices[vo + 3] = tileheight * y;
+		
+		// Top left corner
+		vertices[vo + 4] = tilewidth * x;
+		vertices[vo + 5] = tileheight * (y + 1);
+		
+		// Top right corner
+		vertices[vo + 6] = tilewidth * (x + 1);
+		vertices[vo + 7] = tileheight * (y + 1);
+		
+		
+		// Set the texture coords
+		int i = 2 * 4 * squarei; // Offset, 4 vertices per tile, 2 floats per vertex
 		if (rotation == Tilerotation.r0) {
 			// Bottom left corner
 			textureCoords[i + 0] = tileTexRatioX * textureX;  

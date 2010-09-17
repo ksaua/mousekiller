@@ -66,9 +66,13 @@ public class Map {
 //		tilemap = Texture.loadTexture(gl, assets.open("textures/map.png"));
 	}
 		
-	private byte[][] tiles;
+	private byte[][][] tiles;
+	private int sizex;
+	private int sizey;
+	private int sizez;
 	private Tileset tileset;
-	private TextureGrid texturegrid;
+	private TextureGrid[] layers;
+//	private TextureGrid texturegrid;
 	
 	/*
 	 * String map name
@@ -86,7 +90,7 @@ public class Map {
 	 * 
 	 */ 
 	
-	public Map(GL10 gl, Tileset tileset, byte[][] tiles) throws IOException {
+	public Map(GL10 gl, Tileset tileset, int sizex, int sizey, int sizez, byte[][][] tiles) throws IOException {
 //		tileset = new Tileset(assets.open("tileset1"), gl, assets);
 //		
 //		tiles = new byte[][] {
@@ -103,6 +107,9 @@ public class Map {
 //		};
 		this.tileset = tileset;
 		this.tiles = tiles;
+		this.sizex = sizex;
+		this.sizey = sizey;
+		this.sizez = sizez;
 		
 		// Needs to be flipped
 //		for (int i = 0; i < tiles.length / 2; i++) {
@@ -111,38 +118,57 @@ public class Map {
 //			tiles[tiles.length - i - 1] = t;
 //		}
 
-		// Set up Texturegrid
-		texturegrid = new TextureGrid(tileset.tileimage, tiles[0].length, tiles.length, TILESIZE, TILESIZE);
-		
-		for (int y = 0; y < tiles.length; y++) {
-			for (int x = 0; x < tiles[0].length; x++) {
-				Tileset.Tiletype type = tileset.types[tiles[y][x]];
-				texturegrid.set(x, y, (int)type.tileimagex, (int)type.tileimagey, type.rotation);
+		// Set up layers
+		layers = new TextureGrid[tiles.length]; 
+		for (int z = 0; z < sizez;  z++) {
+			
+			// Figure out how many squares we need in this layer
+			int squares = 0;
+			for (int y = 0; y < sizey; y++) {
+				for (int x = 0; x < sizex; x++) {
+					if (tiles[z][y][x] != -1) squares++;
+				}
 			}
+			
+			// Set up the texturegrid
+			layers[z] = new TextureGrid(tileset.tileimage, squares, TILESIZE, TILESIZE);
+			for (int y = 0; y < sizey; y++) {
+				for (int x = 0; x < sizex; x++) {
+					if (tiles[z][y][x] != -1) {
+						Tileset.Tiletype type = tileset.types[tiles[z][y][x]];
+						layers[z].set(--squares, x, y, (int)type.tileimagex, (int)type.tileimagey, type.rotation);
+					}
+				}
+			}
+			layers[z].generateBuffers(gl);
 		}
-		
-		texturegrid.generateBuffers(gl);
 	}
 	
 
 	
-	public void render(GL10 gl) {
-		texturegrid.render(gl);
+	public void renderUnder(GL10 gl) {
+		layers[0].render(gl);
+	}
+	public void renderOver(GL10 gl) {
+		for (int z = 1; z < layers.length; z++) {
+			layers[z].render(gl);
+		}
 	}
 	
 	public boolean isWalkable(int x, int y) {
 		if (x < 0 || y < 0) return false;
-		if (!(tiles.length > y && tiles[0].length > x)) return false;
+		if (!(sizey > y && sizex > x)) return false;
+		if (tiles[0][y][x] == -1) return false;
 		
-		return tileset.types[tiles[y][x]].walkable;
+		return tileset.types[tiles[0][y][x]].walkable;
 	}
 	
 	private ArrayList<Vector2i> roads;
 	public Vector2i getRandomRoad() {
 		if (roads == null) {
 			roads = new ArrayList<Vector2i>();
-			for (int y = 0; y < tiles.length; y++) {
-				for (int x = 0; x < tiles[0].length; x++) {
+			for (int y = 0; y < sizey; y++) {
+				for (int x = 0; x < sizex; x++) {
 					if (isWalkable(x, y)) {
 						roads.add(new Vector2i(x, y));
 					}
@@ -169,11 +195,11 @@ public class Map {
 	}
 
 	public int getHeight() {
-		return tiles.length * TILESIZE;
+		return sizey * TILESIZE;
 	}
 	
 	public int getWidth() {
-		return tiles[0].length * TILESIZE;
+		return sizex * TILESIZE;
 	}
 	
 	public static Map load(GL10 gl, String name, AssetManager assets) throws IOException {
@@ -182,17 +208,21 @@ public class Map {
 		
 		int sizex = o.readByte();
 		int sizey = o.readByte();
+		int sizez = o.readByte();
 		
-		Log.d("Map", sizex + ", " + sizey);
+		Log.d("Map", sizex + ", " + sizey + ", " + sizez);
 		
-		byte[][] tiles = new byte[sizey][sizex];
-		for (int y = 0; y < sizey; y++) {
-			for (int x = 0; x < sizex; x++) {
-				tiles[y][x] = o.readByte();
-				Log.d("Map", x + ", "+ y + ": " + tiles[y][x]);
-			}	
+		byte[][][] tiles = new byte[sizez][sizey][sizex];
+		for (int z = 0; z < sizez; z++) {
+			for (int y = 0; y < sizey; y++) {
+				for (int x = 0; x < sizex; x++) {
+					tiles[z][y][x] = o.readByte();
+					Log.d("Map", x + ", "+ y + ", " + z + ": " + tiles[z][y][x]);
+				}	
+			}
 		}
+
 		
-		return new Map(gl, tileset, tiles);
+		return new Map(gl, tileset, sizex, sizey, sizez, tiles);
 	}
 }

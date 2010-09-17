@@ -138,7 +138,7 @@ public class Bomb extends Entity {
 				int ety = gs.getMap().getTileY(entity.getY());
 				if ((tiley == ety && (tilex - walkableLeft <= etx && etx <= tilex + walkableRight)) ||
 					(tilex == etx && (tiley - walkableDown <= ety && ety <= tiley + walkableUp))) {
-					if (entity instanceof Mouse) {
+					if ((entity instanceof Mouse) && (((Mouse) entity).getState() != Mouse.State.growing)) {
 						if (((Mouse) entity).getSex() == Mouse.Sex.male) mcl.modifyMiceAmounts(-1, 0);
 						else mcl.modifyMiceAmounts(0, -1);
 					}

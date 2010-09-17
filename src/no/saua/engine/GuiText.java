@@ -25,11 +25,11 @@ public class GuiText extends GuiEntity {
 		
 		this.text = text;
 		
-		tg = new TextureGrid(font.getTexture(), text.length(), 1, font.getCharWidth(), font.getCharHeight());
+		tg = new TextureGrid(font.getTexture(), text.length(), font.getCharWidth(), font.getCharHeight());
 		for (int i = 0; i < text.length(); i++) {
 			int x = font.getCharPositionX(text.charAt(i));
 			int y = font.getCharPositionY(text.charAt(i));
-			tg.set(i, 0, x, y, Tilerotation.r0);
+			tg.set(i, i, 0, x, y, Tilerotation.r0);
 		}
 		tg.generateBuffers(gl);	
 	}

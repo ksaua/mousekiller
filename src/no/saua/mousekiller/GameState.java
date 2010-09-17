@@ -69,6 +69,9 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 			System.exit(1);
 		}
 		
+		males = 0;
+		females = 0;
+		
 //		entities = new ArrayList<Entity>();
 //		bombs = new ArrayList<Bomb>();
 		
@@ -121,12 +124,12 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 		
 		// Center map
 		camera.transform(gl);
-		map.render(gl);
+		map.renderUnder(gl);
 		
 		for (Entity en: entities) {
 			en.render(gl);
 		} 
-		
+		map.renderOver(gl);
 //		for (Bomb bomb: bombs) {
 //			bomb.renderGrid(gl);
 //		}
