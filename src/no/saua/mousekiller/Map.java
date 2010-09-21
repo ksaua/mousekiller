@@ -127,7 +127,7 @@ public class Map {
 			int squares = 0;
 			for (int y = 0; y < sizey; y++) {
 				for (int x = 0; x < sizex; x++) {
-					if (tiles[z][y][x] != -1) squares++;
+					if (tiles[z][y][x] != -1 && (z != 0 || isVisible(x, y))) squares++;
 				}
 			}
 			
@@ -135,7 +135,7 @@ public class Map {
 			layers[z] = new TextureGrid(tileset.tileimage, squares, TILESIZE, TILESIZE);
 			for (int y = 0; y < sizey; y++) {
 				for (int x = 0; x < sizex; x++) {
-					if (tiles[z][y][x] != -1) {
+					if (tiles[z][y][x] != -1 && (z != 0 || isVisible(x, y))) {
 						Tileset.Tiletype type = tileset.types[tiles[z][y][x]];
 						layers[z].set(--squares, x, y, (int)type.tileimagex, (int)type.tileimagey, type.rotation);
 					}
