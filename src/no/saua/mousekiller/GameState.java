@@ -37,7 +37,6 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 	private Sidebar sidebar;
 	private PlaceableSidebarItem sideBomb, sideStopSign, sideMale, sideFemale;
 	
-	private Engine engine;
 	private FPSText fpstext;
 	
 	private Font font;
@@ -46,8 +45,6 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 	private int females;
 	
 	public synchronized void init(Engine e, GL10 gl, AssetManager assets) {
-		engine = e;
-		entities = new CopyOnWriteArrayList<Entity>();
 		try {
 			font = new Font(Texture.loadTexture(gl, assets.open("fonts/monospacenumbers.png")), "1234567890", 12, 15);
 			fpstext = new FPSText(e, gl, font);
@@ -63,14 +60,12 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 			StopSign.loadSprites(gl, assets);
 			Bomb.loadSprites(gl, assets);
 			GenderChanger.loadSprites(gl, assets);
-			map = Map.load(gl, "map", assets);
 		} catch (IOException ioe) {
 			Log.e("GameState", "Error loading: " + ioe.getMessage());
 			System.exit(1);
 		}
 		
-		males = 0;
-		females = 0;
+
 		
 //		entities = new ArrayList<Entity>();
 //		bombs = new ArrayList<Bomb>();
@@ -93,7 +88,6 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 			}
 		});
 		
-		camera = new Camera(map, e.getScreenWidth(), e.getScreenHeight());
 		sideBomb = new PlaceableSidebarItem(20, 20, new BombCreator(), 3, font, gl);
 		sideStopSign = new PlaceableSidebarItem(20, 60, new StopSignCreator(), 2, font, gl);
 		sideMale = new PlaceableSidebarItem(20, 100, new MaleChangerCreator(), 2, font, gl);
@@ -104,12 +98,29 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 		sidebar.addSidebarEntity(sideStopSign);
 		sidebar.addSidebarEntity(sideMale);
 		sidebar.addSidebarEntity(sideFemale);
+	}
+	
+	public void loadMap(GL10 gl, AssetManager assets, String mapname) {
+		entities = new CopyOnWriteArrayList<Entity>();
+		try {
+			map = Map.load(gl, "map", assets);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 		
+		Engine e = Engine.engine;
+		camera = new Camera(map, e.getScreenWidth(), e.getScreenHeight());
+
+
 		addCollideableEntity(new Mouse(this, map));
 		addCollideableEntity(new Mouse(this, map));
 		addCollideableEntity(new Mouse(this, map));
 		addCollideableEntity(new Mouse(this, map));
 		addCollideableEntity(new Mouse(this, map));
+		
+		males = 0;
+		females = 0;
 		
 		for (Entity en: entities) {
 			if (en instanceof Mouse) {
@@ -117,7 +128,7 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 				else females++;
 			}
 		}
-		sidebar.setMiceAmount(gl, males, females);
+		sidebar.setMiceAmount(gl, males, females);		
 	}
 
 	public synchronized void render(Engine e, GL10 gl) {
@@ -127,7 +138,9 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 		map.renderUnder(gl);
 		
 		for (Entity en: entities) {
-			en.render(gl);
+			if (map.isVisible(map.getTileX(en.getX()), map.getTileY(en.getY()))) {
+				en.render(gl);
+			}
 		} 
 		map.renderOver(gl);
 //		for (Bomb bomb: bombs) {
@@ -189,14 +202,14 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 	}
 
 	public void sidebarItemDragged(PlaceableSidebarItem item, float x, float y) {
-		x -= engine.getWidth() / 2f;
-		y -= engine.getHeight() / 2f;
+		x -= Engine.engine.getWidth() / 2f;
+		y -= Engine.engine.getHeight() / 2f;
 		
 		int tilex = map.getTileX(camera.gameX((int) x));
 		int tiley = map.getTileY(camera.gameY((int) y));
 		
-		if (map.isWalkable(tilex, tiley)) {
-			Entity e = item.createItem(engine.getGL(), this, map, tilex, tiley);
+		if (map.isWalkable(tilex, tiley) && map.isVisible(tilex, tiley)) {
+			Entity e = item.createItem(Engine.engine.getGL(), this, map, tilex, tiley);
 			
 			if (e.collidable()) collisionGroup.addEntity(e);
 			entities.add(e);
@@ -207,13 +220,9 @@ public class GameState extends State implements SidebarListener, MouseChangeList
 		return map;
 	}
 
-	public Engine getEngine() {
-		return engine;
-	}
-
 	public void modifyMiceAmounts(int dmale, int dfemale) {
 		males += dmale;
 		females += dfemale;
-		sidebar.setMiceAmount(engine.getGL(), males, females);
+		sidebar.setMiceAmount(Engine.engine.getGL(), males, females);
 	}
 }

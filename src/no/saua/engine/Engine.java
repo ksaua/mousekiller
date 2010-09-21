@@ -1,6 +1,7 @@
 package no.saua.engine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -9,6 +10,7 @@ import no.saua.engine.renderstrategies.GenericRenderStrategy;
 import no.saua.engine.renderstrategies.RenderDrawTexture;
 import no.saua.engine.renderstrategies.RenderVBO;
 import no.saua.engine.renderstrategies.UIRenderStrategy;
+import no.saua.mousekiller.GameState;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
@@ -20,6 +22,8 @@ import android.view.View.OnTouchListener;
 
 public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnTouchListener {
 
+	public static Engine engine;
+	
 	// Render strategies
 	public static UIRenderStrategy uiStrategy;
 	public static GenericRenderStrategy normalStrategy;
@@ -30,7 +34,8 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 	int screenWidth;
 	int screenHeight;
 
-	ArrayList<State> states;
+	HashMap<String, State> states;
+	State startingstate;
 	State currentstate;
 	
 	private GL10 gl;
@@ -39,15 +44,16 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 	
 	public Engine(Context context) {
 		super(context);
-		states = new ArrayList<State>();
+		engine = this;
+		states = new HashMap<String, State>();
 		setRenderer(this);
 		setOnTouchListener(this);
 		requestFocus();
 	}
 	
-	public void addState(State state) {
-		if (currentstate == null) currentstate = state;
-		states.add(state);
+	public void addState(String name, State state) {
+		if (startingstate == null) startingstate = state;
+		states.put(name, state);
 	}
 	
 	public int getScreenWidth() {
@@ -129,12 +135,7 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		
-		for (State state: states) {
-			state.init(this, gl, getResources().getAssets());
-		}
-		
 		this.gl = null;
-		Runtime.getRuntime().gc();
 	}
 	
 	public float getFPS() {
@@ -157,12 +158,13 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 		return gl;
 	}
 
-
-
 	public void onDrawFrame(GL10 gl) {
 		long time = SystemClock.uptimeMillis();
 		float dt = 0;
-		if (lastdrawtime != 0) {
+		if (lastdrawtime == 0) {
+			initializeStates(gl);
+			Runtime.getRuntime().gc();
+		} else {
 			dt = (time - lastdrawtime ) / 1000f;
 			fps = 1 / dt;
 		}
@@ -179,5 +181,20 @@ public class Engine extends GLSurfaceView implements GLSurfaceView.Renderer, OnT
 			currentstate.render(this, gl);
 			this.gl = null;
 		}
+	}
+	
+	private void initializeStates(GL10 gl) {
+		for (State state: states.values()) {
+			state.init(this, gl, getResources().getAssets());
+		}
+		currentstate = startingstate;
+	}
+
+	public void setState(String name) {
+		currentstate = states.get(name);
+	}
+
+	public State getState(String name) {
+		return states.get(name);
 	}
 }

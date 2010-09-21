@@ -6,7 +6,7 @@ import android.util.Log;
 
 import no.saua.engine.Engine;
 import no.saua.engine.Font;
-import no.saua.engine.GuiText;
+import no.saua.engine.gui.GuiText;
 
 public class FPSText {
 	private final static int updateFrequency = 5;

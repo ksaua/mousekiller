@@ -16,7 +16,8 @@ public class Main extends Activity {
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         Engine engine = new Engine(this);
-        engine.addState(new GameState());
+        engine.addState("menu", new MenuState());
+        engine.addState("game", new GameState());
    		setContentView(engine);
     }
 }

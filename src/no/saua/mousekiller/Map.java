@@ -30,7 +30,7 @@ public class Map {
 		class Tiletype {
 			byte tileimagex, tileimagey;
 			TextureGrid.Tilerotation rotation;
-			boolean walkable, placeable;
+			boolean walkable, placeable, visible;
 		}
 		public Texture tileimage;
 		public Tiletype[] types;
@@ -55,6 +55,7 @@ public class Map {
 				
 				t.walkable = o.readBoolean();
 				t.placeable = o.readBoolean();
+				t.visible = o.readBoolean();
 				
 				types[i] = t;
 			}
@@ -224,5 +225,11 @@ public class Map {
 
 		
 		return new Map(gl, tileset, sizex, sizey, sizez, tiles);
+	}
+
+
+
+	public boolean isVisible(int x, int y) {
+		return tiles[1][y][x] == -1 || tileset.types[tiles[1][y][x]].visible;
 	}
 }

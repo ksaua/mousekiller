@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.microedition.khronos.opengles.GL10;
 
 import no.saua.engine.Animation;
+import no.saua.engine.Engine;
 import no.saua.engine.Entity;
 import no.saua.engine.Grid;
 import no.saua.engine.State;
@@ -105,7 +106,7 @@ public class Bomb extends Entity {
 	public void update(float dt, GameState gs) {
 		super.update(dt, gs);
 		if (!initialized) {
-			grid.generateBuffers(gs.getEngine().getGL());
+			grid.generateBuffers(Engine.engine.getGL());
 			initialized = true;
 		}
 
@@ -118,7 +119,7 @@ public class Bomb extends Entity {
 		} else {
 			bangtime -= dt;
 			if (bangtime < 0) {
-				grid.releaseHardwareBuffers(gs.getEngine().getGL());
+				grid.releaseHardwareBuffers(Engine.engine.getGL());
 				this.remove();
 			} else {
 				bangAnimation.update(dt);

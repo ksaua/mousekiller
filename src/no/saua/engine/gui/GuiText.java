@@ -1,7 +1,9 @@
-package no.saua.engine;
+package no.saua.engine.gui;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import no.saua.engine.Font;
+import no.saua.engine.TextureGrid;
 import no.saua.engine.TextureGrid.Tilerotation;
 
 public class GuiText extends GuiEntity {

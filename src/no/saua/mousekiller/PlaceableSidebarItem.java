@@ -4,9 +4,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 import no.saua.engine.Entity;
 import no.saua.engine.Font;
-import no.saua.engine.GuiEntity;
-import no.saua.engine.GuiText;
 import no.saua.engine.Texture;
+import no.saua.engine.gui.GuiEntity;
+import no.saua.engine.gui.GuiText;
 
 public class PlaceableSidebarItem  {
 	public interface SidebarItemCreator {

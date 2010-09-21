@@ -1,7 +1,7 @@
 package no.saua.mousekiller;
 
-import no.saua.engine.GuiEntity;
 import no.saua.engine.Texture;
+import no.saua.engine.gui.GuiEntity;
 
 public class SidebarItem extends GuiEntity {
 	
